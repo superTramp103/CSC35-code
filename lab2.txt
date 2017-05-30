@@ -1,0 +1,65 @@
+# lab2.s
+# SON LE
+# 
+# 1. Assemble 	: as -o lab2.o lab2.s
+# 2. Link 	: ld -o a.out lab.o csc35.o
+# 3. Execute	: a.out
+
+.data
+Table1:
+	.ascii 	"Thin Mints	: 10 carbs per cookie\n\0"
+Table2:
+	.ascii	"Coconut		: 20 carbs per cookie\n\0"
+Table3:
+	.ascii	"Chocolate	: 30 carbs per cookie\n\n\0"
+Ask1:
+	.ascii "How many Thin Mints cookies?\n\0"
+Ask2:
+	.ascii "How many Coconut cookies?\n\0"
+Ask3:
+	.ascii "How many Chocolate cookies?\n\0"
+Result1:
+	.ascii "Wow! That's a total \0"
+Result2:
+	.ascii " carbs!\n\0"
+.text
+.global _start
+
+_start:
+	mov $Table1,%rax
+	call PrintCString
+	mov $Table2, %rax
+	call PrintCString
+	mov $Table3, %rax
+	call PrintCString
+	
+	# ASK 1 USER INPUT
+	mov $Ask1,%rax
+	call PrintCString
+	call ScanInt
+	imul $10, %rax
+	add %rax, %rbx
+	
+	# ASK 2
+	mov $Ask2, %rax
+	call PrintCString
+	call ScanInt
+	imul $20, %rax
+	add %rax,%rbx
+
+	#ASK 3
+	mov $Ask3, %rax
+	call PrintCString
+	call ScanInt
+	imul $30,%rax
+	add %rax, %rbx
+		
+	#Result
+	
+	mov $Result1, %rax
+	call PrintCString
+	mov %rbx, %rax
+	call PrintInt
+	mov $Result2, %rax
+	call PrintCString
+	call EndProgram

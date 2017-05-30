@@ -1,0 +1,76 @@
+#lab3.s
+#SON LE
+
+# 1.Assemble 	: as -o lab3.o lab3.s
+# 2.Link	: ld -o a.out lab.o csc35.o
+# 3.Execute 	: a.out
+
+.data
+Ask1:
+	.ascii "How many daily units does the patient take?\n\0"
+Ask2:
+	.ascii "\nWhat is the patient's blood sugar level?\n\0"
+Ans1:
+	.ascii "The patient's ICF is :  \0"
+Ans2:
+	.ascii "The patient needs : \0"
+Ans22:
+	.ascii " units.\n\0"
+
+.text
+
+.global _start
+
+_start:
+
+	mov $Ask1, %rax		# restore Ask1 to RAX
+	call PrintCString	# call RAX
+				
+	call ScanInt		# Input from User into RAX
+	mov %rax, %rcx		# switch from RAX to RCX register
+	
+	# Division 1800/ rcx
+	mov $1800, %rax		# 1800 into RAX
+	idiv %rcx, %rax		# divide RCX by 1800
+	
+	mov %rax,%rsi		#move to new resigter RSI
+	
+	
+
+	mov $Ans1,%rax		#move Ans1 into RAX
+	call PrintCString	# call RAX
+	mov %rsi,%rax		#move result from division (stored in RSI) into RAX
+	call PrintInt		# Print result 1
+	
+				#save RAX(result 1) for next calculation
+	mov %rax, % r10		#by store it into new resigter (R10). note RDX resigter wont work here 
+
+	mov $Ask2,%rax		#restore Ask2 to RAX
+	call PrintCString	#call RAX
+	call ScanInt		#Input User into RAX
+	
+
+	mov %rax, %r8		# move blood sugar level input into new resigter R8	
+
+	mov %r8, %r9 		# move R8 into R9 for easy subtraction
+	sub $150, %r9		# subtract sugar level - 150 and store the value into R9
+
+	
+	mov %r9, %r11		# switch R9 to R11
+	
+	mov %r11, %r12		# the Switch R11 to R12 for easy division
+
+	mov %r12,%rax		#move result for subtraction to RAX
+	idiv %r10, %rax		# R12 / R10
+	
+	mov %rax, %r13
+
+	mov $Ans2, %rax
+	call PrintCString
+	mov %r13,%rax	
+	call PrintInt
+	
+	mov $Ans22, %rax
+	call PrintCString
+
+	call EndProgram

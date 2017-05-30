@@ -1,0 +1,20 @@
+.data
+
+.text
+
+.global _start
+
+_start:
+	mov $0,%rdx
+while:
+
+	cmp $10, %rdx
+	jge End
+	add $1, %rdx
+	jmp while
+	
+End:
+	mov %rdx, %rax
+	call PrintInt
+	call EndProgram
+

@@ -1,0 +1,78 @@
+#	lab5.s
+#	SON LE
+#	4/18/2017
+#	Purpose:  
+#	Your program will take a string – read from the keyboard
+# 	and output in all lower caps. Essentially, you are going
+#	to store the string in memory and then convert it to lower case.
+#	
+# 1.Assemble 	:	as -o lab5.o lab5.s
+# 2.Link	:	ld -o a.out lab5.o csc35.o
+# 3.Execute 	: 	a.out
+#---------------------------------------------------------------------------
+.data
+Question:
+	.ascii "Please enter a text message\n\0"
+Fixed:
+	.ascii "Fixed sentence is:\n\0"
+Text:
+	.space 100			# Input buffer
+length:
+	.long 0
+.text
+
+.global _start
+
+_start:
+
+	mov $Question, %rax		# Display Question
+	call PrintCString		
+
+	mov $Text, %eax			# Address to Write 
+	mov $100, %ebx			# Max bytes to read(so no buffer overflow)
+	call ScanCString
+	
+   	mov $Text, %eax			#get the size of the text
+	call LengthCString
+	
+	mov %ebx, %ecx
+	
+	mov $length,%eax
+	mov $0,%ebx
+	
+	call LowerCase
+
+	mov $Fixed, %rax
+	call PrintCString
+	
+	mov $Text, %eax
+	call PrintCString 
+	call EndProgram
+
+#Create a subroutine lowerCase
+
+LowerCase:
+	Loop:
+		cmp %ecx,%ebx		# Compare address of strings
+		je End			# If It equal jump END
+	
+		mov Text(%ebx),%al	# move Text 
+
+		cmp $65, %al		# AL > $65 (A)
+		jl notChanged		# failed statement
+		cmp $90,%al		# AL < $90 (A)
+		jg notChanged		# failed statement
+
+		add $32, Text(%ebx) 	# UpperCaseChar + 32 = lowercase
+		add $1, %ebx		# ebx ++
+		jmp Loop		#  jump back toloop
+	
+	notChanged:
+		add $1, %ebx		# if not UpperCase move to the next char
+		jmp LowerCase
+	End:
+ret
+
+
+
+	

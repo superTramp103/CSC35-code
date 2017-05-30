@@ -1,0 +1,47 @@
+# lab1.s
+# SON LE
+#
+# 1. Assemble 	: as -0 lab1.o lab1.s
+# 2. Link	: ld -0 a.out lab1.o csc35.o
+# 3. Execute	: a.out
+
+.data 					#Start the data section
+Message:				#Message is an address
+	.ascii "Hello Dr. Sugar!\n\0"	#Create a buffer of ASCII
+Message1:
+	.ascii "My name is Son Le.\n\0"
+Message2:
+	.ascii "I haven't had a check-up in \0"
+Message3:
+	.ascii " months.\n\0"
+Message4:
+	.ascii "Call Pizza hut and ask for the phone number to Domino's.\n\0"
+Message5:
+	.ascii "I have a math problem for Ya !\n\0"
+.text
+.global _start				#Make the _start label public
+/Users/SonLe 
+_start:					#UNIX starts here!
+	mov $Message, %rax		#Put the address into rax
+	call PrintCString		#Execute the csu35.o subroutine
+
+	mov $Message1, %rax
+	call PrintCString
+
+	mov $Message2, %rax
+	call PrintCString
+	mov $2, %rax
+	call PrintInt
+	mov $Message3, %rax
+	call PrintCString
+	mov $Message4, %rax
+	call PrintCString
+	
+	#MATh
+	mov $Message5, %rax
+	call PrintCString
+	mov $99, %rax
+	
+	call PrintInt
+
+	call EndProgram			#Execute the csu35.o subroutine

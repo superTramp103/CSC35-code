@@ -1,0 +1,225 @@
+#Project 1: Guess My Phrase
+#SON LE
+#CSC 35 
+#
+#1.Assemble	: as -o game1.o game1.s
+#2.Link		: ld -o a.out game1.o csc35.o
+#3.Execute	: a.out
+#Pseudocode
+#The following pseudocode will give you a basic idea of what you have to do:
+#1. Display your program's name
+#2. Read the correct answer from the keyboard.
+#3. Implement a For Loop to make a copy of the correct answer
+#4. Implement a For Loop to replace every second character with something (asterisk, underscore, etc...)
+#5. Implement a While Loop
+#	a. Display the phrase (with missing characters)
+#	b. Input the player's guess
+#	c. Implement a For Loop to compare the correct answer to the guess. 
+
+#------------------------------------------------------------------------------
+
+.data
+
+Welcome:
+	.ascii "Welcome to the Game. Let's see if you can read my mind!\n\0"
+Player1:
+	.ascii "Player 1, Enter a word: \0"
+Player2:
+	.ascii "Player 2, The word is  \0"
+Newline:
+	.ascii "\n\0"
+NewLinee:
+	.ascii "\n\0"
+YourGuess:
+	.ascii "Your Guess: \0"
+
+Right:
+	.ascii "Correct ! Yeahhhh\n\0"
+Wrong:
+	.ascii "Sorry, This is wrong, try me again !\n\0"
+Phrase: 	
+	.space 30	# Input buffer of 30
+Copy:
+	.space 30	# create array with value of 30
+Guess:
+	.space 30	#create array with value of 30
+
+numberEnter:
+	.ascii "The number of your guess is \0"
+A:
+	.ascii "You got A You are so smart, Good Job !\n\0"
+B:
+	.ascii "You got B Well Done !\n\0"
+C:
+	.ascii "You got C Focus next time and you can read my mind !\n\0"
+D:
+	.ascii "You got D Nice ! but you need to focus more !\n\0"
+F:
+	.ascii "You got F You can not read my mind, my friend ! lolz\n\0"
+Default:
+	.ascii "This game is not for you !\n\0"
+
+#-----------End message-----------------------------------------------------
+
+.text
+.global _start				# must be declared for linker
+
+
+_start:					#tells linker entry point
+
+	mov $Welcome, %rax
+	call PrintCString		# Display "Welcome"
+	
+	mov $Player1, %rax
+	call PrintCString		# Display "Enter a word:"
+	
+	mov $Phrase, %rax		#
+	mov $30, %rbx			# mov 30 value to Register RBX
+	call ScanCString		# Input words [30] now in RBX
+	
+	mov $Phrase, %rax
+	call LengthCString		#
+	mov %rbx, %r11	
+	
+	mov $Newline, %eax
+	call PrintCString
+		
+	
+	call VTClearScreen	# clear Screen !
+
+#------------Player 2-------------------------------------------->
+
+#-------------LOOP1---------------------------------------------->
+
+# Implement  a Loop  to make a copy of correct answer 
+	mov $0, %r14 			# edi =0;
+Loop1: 					# This is where loop 1 START
+	cmp $30, %r14			# (edi < 40)
+	je End1				# jump to end loop
+	mov Phrase(%r14), %al		# Guess[EDI] = Phrase[edi];
+	mov %al, Copy(%r14)
+	
+	add $1, %r14			#EDI ++
+	jmp Loop1
+End1: 					# This is where loop 1 END
+#---------------LOOP2----------------------------------------->
+# Implement a For Loop to replace every second character with something (asterisk, underscore, etc...) 
+# Use $Phrase for hidden word ! we copy Phrase already
+	
+	mov $1, %rdi			# rdi = 1
+Loop2:					# This is where loop 2 start
+	cmp %r11, %rdi 			# i >= 30
+	jge  End2
+	
+	movb $95, Phrase(%rdi)		# replace a letter with "_" 
+	
+	add $2, %rdi			# i+=2
+	jmp Loop2		
+End2:
+	
+#---------------WhileLoop----------------------------------------->
+
+While:					# This is where While Loop Start
+	mov $Player2, %rax		# Display Player2
+	call PrintCString
+	
+	mov $Phrase, %rax		# Display Hidden Word
+	call PrintCString
+	
+	
+	mov $Newline, %rax		# Newline
+	call PrintCString 		#
+
+	mov $YourGuess, %rax
+	call PrintCString
+	
+	mov $Guess, %eax		#
+	mov $30, %ebx			# mov 30 value to Register EBX
+	call ScanCString		# Input words [20] now in EBX
+	
+	add $1,%r10			# ADD NUMBER OF GUESS INTO R10
+
+	jmp Loop3			# Jump to Loop 3 to Compare
+				
+	
+#-------------LOOP3---------------------------------------------->	
+# Implement a For Loop to compare 2 registers
+Loop3:				# This is where Loop 3 start
+	mov Copy,%rdx		# Move correct Copy of Phrase to RDX register
+	mov Guess,%rcx		# Move Guess word to RCX register	
+	cmp %rdx, %rcx		# If RDX = RCX
+	je Correct		# Jump to Correct
+
+	mov $Wrong, %rax	# If not equal jump here
+	call PrintCString	#
+	jmp While		# And jump to While loop until get the correct Answer
+	
+
+Correct:
+	mov $Right, %rax	# Display correct 
+	call PrintCString
+	jmp Loop4		#jmp to Loop4
+
+#-------------LOOP4---------------------------------------------->
+# Implement a CASE for comparison to display a specialized message.
+Loop4:
+	mov $numberEnter, %rax	# DISPLAY "The number of your guess is"
+	call PrintCString
+	
+	
+	mov %r10, %rax		# Move the number stored in R10 to RAX register
+	call PrintInt		# DISPLAY the Number
+	mov %rax, %r10		# Move The number back to R10 for CASE Comparisons
+
+	mov $NewLinee, %rax	# NewLine
+	call PrintCString
+	
+	mov %r10, %rax		# Move the Number from R10 to RAX
+
+	cmp $2,%rax		# Compare The number with 2
+	jle case_2		# IF The Number less OR Equal to 2, Jump to case_2	
+	cmp $4,%rax		# |
+	jle case_4		# |
+	cmp $6,%rax		# |	
+	jle case_6		# V
+	cmp $8,%rax
+	jle case_8
+	cmp $10,%rax
+	jle case_10
+	
+	cmp $10,%rax		# IF The Number GREAT THAN 2, 
+	jg default		# Jump to default
+
+case_2:				# CASE_2 start here 
+	mov $A, %rax		# DISPLAY Message
+	call PrintCString
+	jmp End3		# End Loop4
+case_4:
+	mov $B, %rax
+	call PrintCString
+	jmp End3
+case_6:
+	mov $C, %rax
+	call PrintCString
+	jmp End3
+case_8:
+	mov $D, %rax
+	call PrintCString
+	jmp End3
+case_10:
+	mov $D, %rax
+	call PrintCString
+	jmp End3
+default:
+	mov $Default, %rax
+	call PrintCString
+	jmp End3
+End3:
+	
+	call EndProgram		# End Program
+	
+	
+
+
+
+

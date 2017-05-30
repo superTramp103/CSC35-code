@@ -1,0 +1,136 @@
+#	lab3.s
+#	SON LE
+#	3/29/2017
+#	Purpose:  
+#	For this lab, you are going to create a Risk Estimator program that will ask
+#	a series of yes/no questions and, then, print a percentage to the screen.
+#	Each question is worth a predetermined number of points. If the user
+#	specifies the correct answer, it is added to their total score.
+#	From this, you can compute a Risk Estimate from the answers. 
+#	Risk Estimate= Points Earned / Total Points
+
+# 1.Assemble 	:	as -o lab4.o lab4.s
+# 2.Link			:	ld -o a.out lab4.o csc35.o
+# 3.Execute 	: 	a.out
+#---------------------------------------------------------------------------
+
+.data
+
+Tittle:
+	.ascii "RISK OF FALLING AN EXAM\n\0"
+Q1:
+	.ascii "Do you take note in class?\n\0"
+Q2:
+	.ascii "Do you pay attention in class?\n\0"
+Q3:
+	.ascii "Do you study for the exam?\n\0"
+Q4:
+	.ascii "Do you smoke weed?\n\0"
+Q5:
+	.ascii "Do you drink a lot of coffee?\n\0"
+Newline:
+	.ascii "\n\0"
+Result:
+	.ascii "Your risk of failing for exam estimate is \0"
+Percent:
+	.ascii "% ,please study ! ! !.\n\0"
+Answer1:
+	.space 2
+Answer2:
+	.space 2
+
+.text
+.global _start
+
+_start:
+
+	mov 	$Tittle, %rax		#DISPLAY TITTLE
+	call 	PrintCString
+
+Qu1:
+	mov 	$Newline, %rax		#SPACE BETWEEN LINE
+	call 	PrintCString
+
+	mov 	$Q1, %rax		#DISPLAY Q1
+	call 	PrintCString
+	
+	mov	$Answer1, %rax		# Address to write to
+	call 	ScanChar						
+	add 	$1, %r8			# add point to R8 (TotalPoint)
+		
+	
+	cmp 	$'y',%al		# IF YES, then Add 1 to Resgister R9
+	jne 	Qu2			# jump to next Question 2
+	add 	$1, %r9			# Add 1
+
+Qu2:
+	mov 	$Q2, %rax		#DISPLAY Q2
+	call 	PrintCString
+	
+	mov	$Answer1, %rax		# Address to write to
+	call	 ScanChar						
+	add 	$4, %r8			# add point to R8 (TotalPoint)
+	
+	cmp 	$'y',%al		# IF YES, then Add 4 to Resgister R9
+	jne 	Qu3			# jump to next Question 3
+	add 	$4, %r9			# And add 4 to R9
+	
+ Qu3:
+	mov 	$Q3, %rax		#DISPLAY Q3
+	call 	PrintCString
+	
+	mov	$Answer1, %rax		# Address to write to
+	call	ScanChar						
+	add 	$4, %r8			# add point to R8 (TotalPoint)
+	
+	cmp 	$'y',%al		# IF YES, then Add 4 to Resgister R9
+	jne 	Qu4			# jump to next Question 4
+	add 	$4, %r9			# And add 4 to R9
+	
+ Qu4:
+	mov 	$Q4, %rax		#DISPLAY Q4
+	call	 PrintCString
+	
+	mov	$Answer1, %rax		# Address to write to
+	call 	ScanChar						
+	add 	$4, %r8			# save total point later
+	
+	cmp 	$'y',%al
+	jne 	Qu5					# jump to next Question 5
+	add 	$4, %r9
+Qu5:
+	mov 	$Q5, %rax     		#DISPLAY Q5
+	call 	PrintCString
+	
+	mov	$Answer1, %rax		# Address to write to
+	call 	ScanChar						
+	add 	$4, %r8			# add point to R8 (TotalPoint)
+	
+	cmp $'y',%al			# IF YES, then Add 4 to Resgister R9
+	jne Calculate			# jump to next Calculate
+	add $4, %r9			# And add 4 to R9
+	
+Calculate:				#Calculate function
+	
+	#Multiply
+	
+	mov %r9, %rax			# move R9 to RAX
+	mov $100, %rbx			# move 100 to RAX
+	mul %rbx			# R9 x 100
+	mov %rax ,%r10 			# store total*100 to R10
+
+	#Division
+	mov %r10, %rax			# move R10 to RAX
+	idiv %r8,%rax			# R8 / R10
+	mov %rax, %r12			
+	
+	mov $Result, %rax
+	call PrintCString
+
+	mov %r12, %rax
+	call PrintInt
+	
+	mov $Percent, %rax
+	call PrintCString
+	
+	call EndProgram

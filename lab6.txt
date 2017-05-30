@@ -1,0 +1,41 @@
+.data
+Message:
+	.ascii "Have a great Summer Dr. S!\n\0"
+Message1:
+	.ascii "My name is Son Le.\n"
+Message2:
+	.ascii "My plan is taking Csc 131 and Csc 130 in Summer.!\n\0"
+.text
+
+.global _start
+
+_start:
+
+	mov $1, %rax 		#Linux command for WRITE
+	mov $1, %rdi		# 1 = Screen Print
+	mov $Message, %rsi	# Fill registers with value that will tell Linux what to do
+	mov $28, %rdx		# Max number of bytes to read
+	syscall			# call Linux
+
+	mov $1, %rax
+        mov $1, %rdi
+        mov $Message1, %rsi
+        mov $19, %rdx
+        syscall
+
+	mov $1, %rax
+        mov $1, %rdi
+        mov $Message2, %rsi
+        mov $50, %rdx
+        syscall
+
+#call EndProgram
+	mov $60, %rax
+	mov $0, %rdi
+	syscall
+
+	
+
+#call EndProgram
+
+	
